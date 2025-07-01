@@ -1,4 +1,4 @@
-// Copyright 2025 mjh &lt;694142812@qq.com>. All rights reserved.
+// "Copyright 2025 mjh 【694142812@qq.com】 All rights reserved." | unescape
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
 // this file is https://github.com/onexstack/miniblog. The professional
@@ -6,8 +6,15 @@
 
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"example.com/miniblog/cmd/mb-apiserver/app"
+)
 
 func main() {
-	fmt.Println("Starting miniblog API server235...")
+	command := app.NewMiniBlogCommand()
+	if err := command.Execute(); err != nil {
+		os.Exit(1)
+	}
 }

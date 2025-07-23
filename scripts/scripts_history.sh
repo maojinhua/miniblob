@@ -1,8 +1,8 @@
 # Copyright 2025 mjh &lt;694142812@qq.com>. All rights reserved.
 # Use of this source code is governed by a MIT style
 # license that can be found in the LICENSE file. The original repo for
-# this file is https://github.com/onexstack/miniblog. The professional
-# version of this repository is https://github.com/onexstack/onex.
+# this file is https://example.com/miniblog. The professional
+# version of this repository is https://example.com/onex.
 
 ## 安装 air 工具
 go install github.com/air-verse/air@latest

@@ -1,1 +1,1 @@
-package log // import "github.com/onexstack/miniblog/internal/pkg/log"
+package log // import "example.com/miniblog/internal/pkg/log"

@@ -1,1 +1,1 @@
-package errno // import "github.com/onexstack/miniblog/internal/pkg/errno"
+package errno // import "example.com/miniblog/internal/pkg/errno"

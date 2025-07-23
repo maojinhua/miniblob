@@ -1,1 +1,1 @@
-package errorsx 
+package errorsx

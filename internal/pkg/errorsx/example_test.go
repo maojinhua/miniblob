@@ -76,9 +76,9 @@ func TestErrorX_FromError_WithPlainError(t *testing.T) {
 	errx := errorsx.FromError(plainErr)
 
 	// 检查转换后的 ErrorX
-	assert.Equal(t, errorsx.ErrInternal.Code, errx.Code)       // 默认 500
-	assert.Equal(t, errorsx.ErrInternal.Reason, errx.Reason)   // 默认 ""
-	assert.Equal(t, "Something went wrong", errx.Message) // 转换时保留原始错误消息
+	assert.Equal(t, errorsx.ErrInternal.Code, errx.Code)     // 默认 500
+	assert.Equal(t, errorsx.ErrInternal.Reason, errx.Reason) // 默认 ""
+	assert.Equal(t, "Something went wrong", errx.Message)    // 转换时保留原始错误消息
 }
 
 func TestErrorX_FromError_WithGRPCError(t *testing.T) {

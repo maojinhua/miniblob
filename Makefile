@@ -13,7 +13,7 @@ APIROOT=$(PROJ_ROOT_DIR)/pkg/api
 # 定义版本相关变量
 
 ## 指定应用使用的 version 包，会通过 `-ldflags -X` 向该包中指定的变量注入值
-VERSION_PACKAGE=github.com/onexstack/miniblog/pkg/version
+VERSION_PACKAGE=example.com/miniblog/pkg/version
 ## 定义 VERSION 语义化版本号
 ifeq ($(origin VERSION), undefined)
 VERSION := $(shell git describe --tags --always --match='v*')
@@ -66,9 +66,15 @@ clean: # 清理构建产物、临时文件等.
 .PHONY: protoc
 protoc: # 编译 protobuf 文件.
 	@echo "===========> Generate protobuf files"
+	@mkdir -p $(PROJ_ROOT_DIR)/api/openapi
+	@# --grpc-gateway_out 用来在 pkg/api/apiserver/v1/ 目录下生成反向服务器代码 apiserver.pb.gw.go
+	@# --openapiv2_out 用来在 api/openapi/apiserver/v1/ 目录下生成 Swagger V2 接口文档
 	@protoc                                              \
 		--proto_path=$(APIROOT)                          \
 		--proto_path=$(PROJ_ROOT_DIR)/third_party/protobuf    \
 		--go_out=paths=source_relative:$(APIROOT)        \
 		--go-grpc_out=paths=source_relative:$(APIROOT)   \
+		--grpc-gateway_out=allow_delete_body=true,paths=source_relative:$(APIROOT) \
+		--openapiv2_out=$(PROJ_ROOT_DIR)/api/openapi \
+		--openapiv2_opt=allow_delete_body=true,logtostderr=true \
 		$(shell find $(APIROOT) -name *.proto)

@@ -1,0 +1,30 @@
+server-mode: grpc-gateway
+jwt-key: Rsuqdjsqdiwdhuw8q0dwdhakjq
+
+log:
+  # 是否开启 caller（显示调用日志的文件和行号）
+  disable-caller: false  # 开启caller信息
+  
+  # 是否禁止在 panic 及以上级别打印堆栈信息
+  disable-stacktrace: false  # 允许打印堆栈信息
+  
+  # 日志级别（debug/info/warn/error/dpanic/panic/fatal）
+  level: debug  # 设置调试级别
+  
+  # 日志格式（console 或 json）
+  format: json  # 使用JSON格式输出
+  
+  # 日志输出路径（支持多目标）
+  output-paths:
+    - /tmp/miniblog.log  # 日志文件路径
+    - stdout             # 标准输出（控制台）
+
+# GRPC 服务器相关配置
+grpc:
+   # GRPC 服务器监听地址
+   addr: :6666
+
+# HTTP 服务相关配置
+http:
+  # HTTP 服务监听地址
+   addr: :5555

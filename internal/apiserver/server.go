@@ -1,18 +1,24 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
+// this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
 package apiserver
 
 import (
+	"context"
+	"errors"
 	"net"
+	"net/http"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	genericoptions "github.com/onexstack/onexstack/pkg/options"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	handler "example.com/miniblog/internal/apiserver/handler/grpc"
 	"example.com/miniblog/internal/pkg/log"
@@ -37,6 +43,7 @@ type Config struct {
 	ServerMode  string
 	JWTKey      string
 	Expiration  time.Duration
+	HTTPOptions *genericoptions.HTTPOptions
 	GRPCOptions *genericoptions.GRPCOptions
 }
 
@@ -66,10 +73,7 @@ func (cfg *Config) NewUnionServer() (*UnionServer, error) {
 
 	// 创建 GRPC Server 实例
 	grpcsrv := grpc.NewServer()
-	// 将 MiniBlogServer 服务注册到 GRPC Server
 	apiv1.RegisterMiniBlogServer(grpcsrv, handler.NewHandler())
-	// 向 gRPC Server 注册反射服务,从而使得 gRPC 服务支持服务反射功能。
-	// 该功能允许客户端获取服务描述信息
 	reflection.Register(grpcsrv)
 
 	return &UnionServer{cfg: cfg, srv: grpcsrv, lis: lis}, nil
@@ -79,5 +83,39 @@ func (cfg *Config) NewUnionServer() (*UnionServer, error) {
 func (s *UnionServer) Run() error {
 	// 打印一条日志，用来提示 GRPC 服务已经起来，方便排障
 	log.Infow("Start to listening the incoming requests on grpc address", "addr", s.cfg.GRPCOptions.Addr)
-	return s.srv.Serve(s.lis)
+	// 在协程中启动 grpc 服务
+	// nolint: errcheck
+	go s.srv.Serve(s.lis)
+
+	//nolint: staticcheck
+	dialOptions := []grpc.DialOption{grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	// 通过 grpc.NewClient 创建一个 gRPC 客户端实例
+	conn, err := grpc.NewClient(s.cfg.GRPCOptions.Addr, dialOptions...)
+	if err != nil {
+		return err
+	}
+
+	gwmux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions: protojson.MarshalOptions{
+			// 设置序列化 protobuf 数据时，枚举类型的字段以数字格式输出.
+			// 否则，默认会以字符串格式输出，跟枚举类型定义不一致，带来理解成本.
+			UseEnumNumbers: true,
+		},
+	}))
+	if err := apiv1.RegisterMiniBlogHandler(context.Background(), gwmux, conn); err != nil {
+		return err
+	}
+
+	log.Infow("Start to listening the incoming requests", "protocol", "http", "addr", s.cfg.HTTPOptions.Addr)
+	httpsrv := &http.Server{
+		Addr:    s.cfg.HTTPOptions.Addr,
+		Handler: gwmux,
+	}
+
+	if err := httpsrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+
+	return nil
 }

@@ -1,9 +1,18 @@
+// "Copyright 2025 mjh 【694142812@qq.com】 All rights reserved." | unescape
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://example.com/miniblog. The professional
+// version of this repository is https://example.com/onex.
+
 package log
 
 import (
+	"context"
 	"sync"
 	"time"
 
+	"example.com/miniblog/internal/pkg/contextx"
+	"example.com/miniblog/internal/pkg/known"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -178,4 +187,36 @@ func Fatalw(msg string, kvs ...any) {
 
 func (l *zapLogger) Fatalw(msg string, kvs ...any) {
 	l.z.Sugar().Fatalw(msg, kvs...)
+}
+
+// W 解析传入的 context，尝试提取关注的键值，并添加到 zap.Logger 结构化日志中.
+// W 是 WithContext 的简称
+func W(ctx context.Context) Logger {
+	return std.W(ctx)
+}
+
+func (l *zapLogger) W(ctx context.Context) Logger {
+	// 由于 log 包会被多个请求并发调用，为防止请求 ID 被污染，每个请求都会对 log 包深度拷贝一个 *zapLogger 对象，然后再添加请求 ID
+	lc := l.clone()
+
+	// 定义一个映射，关联 context 提取函数和日志字段名。
+	contextExtractors := map[string]func(context.Context) string{
+		known.XRequestID: contextx.RequestID, // 提取请求 ID
+		known.XUserID:    contextx.UserID,    // 提取用户 ID
+	}
+
+	// 遍历映射，从 context 中提取值并添加到日志中。
+	for fieldName, extractor := range contextExtractors {
+		if val := extractor(ctx); val != "" {
+			lc.z = lc.z.With(zap.String(fieldName, val))
+		}
+	}
+
+	return lc
+}
+
+// clone 深度拷贝 zapLogger.
+func (l *zapLogger) clone() *zapLogger {
+	newLogger := *l
+	return &newLogger
 }

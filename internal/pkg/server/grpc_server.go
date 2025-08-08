@@ -1,3 +1,9 @@
+// "Copyright 2025 mjh 【694142812@qq.com】 All rights reserved." | unescape
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://example.com/miniblog. The professional
+// version of this repository is https://example.com/onex.
+
 package server
 
 import (
@@ -22,6 +28,7 @@ type GRPCServer struct {
 // NewGRPCServer 创建一个新的 GRPC 服务器实例.
 func NewGRPCServer(
 	grpcOptions *genericoptions.GRPCOptions,
+	serverOptions []grpc.ServerOption,
 	registerServer func(grpc.ServiceRegistrar),
 ) (*GRPCServer, error) {
 	lis, err := net.Listen("tcp", grpcOptions.Addr)
@@ -30,7 +37,7 @@ func NewGRPCServer(
 		return nil, err
 	}
 
-	grpcsrv := grpc.NewServer()
+	grpcsrv := grpc.NewServer(serverOptions...)
 
 	registerServer(grpcsrv)
 	registerHealthServer(grpcsrv)

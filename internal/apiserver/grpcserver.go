@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 
 	handler "example.com/miniblog/internal/apiserver/handler/grpc"
+	mw "example.com/miniblog/internal/pkg/middleware/grpc"
 	"example.com/miniblog/internal/pkg/server"
 	apiv1 "example.com/miniblog/pkg/api/apiserver/v1"
 )
@@ -35,9 +36,17 @@ var _ server.Server = (*grpcServer)(nil)
 //  2. 处理默认值或回退逻辑
 //  3. 表达灵活选项
 func (c *ServerConfig) NewGRPCServerOr() (server.Server, error) {
+	// 配置 gRPC 服务器选项，包括拦截器链
+	serverOptions := []grpc.ServerOption{
+		grpc.ChainUnaryInterceptor(
+			// 请求 ID 拦截器，用于设置请求 ID
+			mw.RequestIDInterceptor(),
+		),
+	}
 	// 创建 gRPC 服务器
 	grpcsrv, err := server.NewGRPCServer(
 		c.cfg.GRPCOptions,
+		serverOptions,
 		func(s grpc.ServiceRegistrar) {
 			apiv1.RegisterMiniBlogServer(s, handler.NewHandler())
 		},

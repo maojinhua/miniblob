@@ -2,7 +2,8 @@
 ### 编译命令
 make build
 ### 启动命令
-_output/mb-apiserver -c $HOME/.miniblog/mb-apiserver.yaml
+_output/mb-apiserver  默认读取配置文件 $HOME/.miniblog/mb-apiserver.yaml
+_output/mb-apiserver -c mb-apiserver.yaml  指定读取当前目录下的 mb-apiserver.yaml
 
 ### grpc-gateway
 #### ​​基本概念​​

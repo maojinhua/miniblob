@@ -1,7 +1,7 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
+// this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
 package apiserver
@@ -38,17 +38,19 @@ var _ server.Server = (*grpcServer)(nil)
 func (c *ServerConfig) NewGRPCServerOr() (server.Server, error) {
 	// 配置 gRPC 服务器选项，包括拦截器链
 	serverOptions := []grpc.ServerOption{
+		// 注意拦截器顺序！
 		grpc.ChainUnaryInterceptor(
-			// 请求 ID 拦截器，用于设置请求 ID
+			// 请求 ID 拦截器
 			mw.RequestIDInterceptor(),
 		),
 	}
+
 	// 创建 gRPC 服务器
 	grpcsrv, err := server.NewGRPCServer(
 		c.cfg.GRPCOptions,
 		serverOptions,
 		func(s grpc.ServiceRegistrar) {
-			apiv1.RegisterMiniBlogServer(s, handler.NewHandler())
+			apiv1.RegisterMiniBlogServer(s, handler.NewHandler(c.biz))
 		},
 	)
 	if err != nil {

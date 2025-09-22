@@ -1,8 +1,8 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
-// version of this repository is https://github.com/onexstack/onex.
+// this file is https://example.com/miniblog. The professional
+// version of this repository is https://example.com/onex.
 
 // Post API 定义，包含博客文章的请求和响应消息
 
@@ -410,7 +410,8 @@ func (*DeletePostResponse) Descriptor() ([]byte, []int) {
 type GetPostRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// postID 表示要获取的文章 ID
-	PostID        string `protobuf:"bytes,1,opt,name=postID,proto3" json:"postID,omitempty"`
+	// @gotags: uri:"postID"
+	PostID        string `protobuf:"bytes,1,opt,name=postID,proto3" json:"postID,omitempty" uri:"postID"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,9 +503,11 @@ func (x *GetPostResponse) GetPost() *Post {
 type ListPostRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// offset 表示偏移量
-	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	// @gotags: form:"offset"
+	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty" form:"offset"`
 	// limit 表示每页数量
-	Limit int64 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// @gotags: form:"limit"
+	Limit int64 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty" form:"limit"`
 	// title 表示可选的标题过滤
 	Title         *string `protobuf:"bytes,3,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -657,7 +660,7 @@ const file_apiserver_v1_post_proto_rawDesc = "" +
 	"\x10ListPostResponse\x12\x1f\n" +
 	"\vtotal_count\x18\x01 \x01(\x03R\n" +
 	"totalCount\x12\x1e\n" +
-	"\x05posts\x18\x02 \x03(\v2\b.v1.PostR\x05postsB4Z2github.com/onexstack/miniblog/pkg/api/apiserver/v1b\x06proto3"
+	"\x05posts\x18\x02 \x03(\v2\b.v1.PostR\x05postsB+Z)example.com/miniblog/pkg/api/apiserver/v1b\x06proto3"
 
 var (
 	file_apiserver_v1_post_proto_rawDescOnce sync.Once

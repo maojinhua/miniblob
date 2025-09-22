@@ -1,8 +1,8 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
-// version of this repository is https://github.com/onexstack/onex.
+// this file is https://example.com/miniblog. The professional
+// version of this repository is https://example.com/onex.
 
 // User API 定义，包含用户信息、登录请求和响应等相关消息
 
@@ -693,7 +693,8 @@ func (*UpdateUserResponse) Descriptor() ([]byte, []int) {
 type DeleteUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// userID 表示用户 ID
-	UserID        string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	// @gotags: uri:"userID"
+	UserID        string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty" uri:"userID"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -776,7 +777,8 @@ func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
 type GetUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// userID 表示用户 ID
-	UserID        string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	// @gotags: uri:"userID"
+	UserID        string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty" uri:"userID"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -868,9 +870,11 @@ func (x *GetUserResponse) GetUser() *User {
 type ListUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// offset 表示偏移量
-	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	// @gotags: form:"offset"
+	Offset int64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty" form:"offset"`
 	// limit 表示每页数量
-	Limit         int64 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// @gotags: form:"limit"
+	Limit         int64 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty" form:"limit"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1037,7 +1041,7 @@ const file_apiserver_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"totalCount\x18\x01 \x01(\x03R\n" +
 	"totalCount\x12\x1e\n" +
-	"\x05users\x18\x02 \x03(\v2\b.v1.UserR\x05usersB7Z5github.com/onexstack/miniblog/pkg/api/apiserver/v1;v1b\x06proto3"
+	"\x05users\x18\x02 \x03(\v2\b.v1.UserR\x05usersB.Z,example.com/miniblog/pkg/api/apiserver/v1;v1b\x06proto3"
 
 var (
 	file_apiserver_v1_user_proto_rawDescOnce sync.Once

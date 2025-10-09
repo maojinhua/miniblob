@@ -77,6 +77,6 @@ protoc: # 编译 protobuf 文件.
 		--grpc-gateway_out=allow_delete_body=true,paths=source_relative:$(APIROOT) \
 		--openapiv2_out=$(PROJ_ROOT_DIR)/api/openapi \
 		--openapiv2_opt=allow_delete_body=true,logtostderr=true \
+		--defaults_out=paths=source_relative:$(APIROOT) \
 		$(shell find $(APIROOT) -name *.proto)
-# 		查找 miniblog 项目目录下所有的 *.pg.go 文件，并对这些文件执行 protoc-go-inject-tag 命令，给生成的 protobuf 结构体添加自定义标签。
 	@find . -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;

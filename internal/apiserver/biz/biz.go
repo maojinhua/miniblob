@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
 // this file is https://example.com/miniblog. The professional
-// version of this repository is https://example.com/onex.
+// version of this repository is https://github.com/onexstack/onex.
 
 package biz
 
@@ -11,6 +11,7 @@ package biz
 import (
 	postv1 "example.com/miniblog/internal/apiserver/biz/v1/post"
 	userv1 "example.com/miniblog/internal/apiserver/biz/v1/user"
+	"example.com/miniblog/pkg/auth"
 
 	// Post V2 版本（未实现，仅展示用）
 	// postv2 "example.com/miniblog/internal/apiserver/biz/v2/post".
@@ -30,19 +31,20 @@ type IBiz interface {
 // biz 是 IBiz 的一个具体实现.
 type biz struct {
 	store store.IStore
+	authz *auth.Authz
 }
 
 // 确保 biz 实现了 IBiz 接口.
 var _ IBiz = (*biz)(nil)
 
 // NewBiz 创建一个 IBiz 类型的实例.
-func NewBiz(store store.IStore) *biz {
-	return &biz{store: store}
+func NewBiz(store store.IStore, authz *auth.Authz) *biz {
+	return &biz{store: store, authz: authz}
 }
 
 // UserV1 返回一个实现了 UserBiz 接口的实例.
 func (b *biz) UserV1() userv1.UserBiz {
-	return userv1.New(b.store)
+	return userv1.New(b.store, b.authz)
 }
 
 // PostV1 返回一个实现了 PostBiz 接口的实例.

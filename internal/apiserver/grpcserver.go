@@ -9,6 +9,8 @@ package apiserver
 import (
 	"context"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/selector"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	genericvalidation "github.com/onexstack/onexstack/pkg/validation"
 	"google.golang.org/grpc"
@@ -43,8 +45,8 @@ func (c *ServerConfig) NewGRPCServerOr() (server.Server, error) {
 		grpc.ChainUnaryInterceptor(
 			// 请求 ID 拦截器
 			mw.RequestIDInterceptor(),
-			// Bypass 拦截器，通过所有请求的认证
-			mw.AuthnBypasswInterceptor(),
+			// 认证拦截器
+			selector.UnaryServerInterceptor(mw.AuthnInterceptor(c.retriever), NewAuthnWhiteListMatcher()),
 			// 请求默认值设置拦截器
 			mw.DefaulterInterceptor(),
 			// 数据校验拦截器
@@ -104,4 +106,19 @@ func (s *grpcServer) RunOrDie() {
 // GracefulStop 优雅停止 HTTP 和 gRPC 服务器.
 func (s *grpcServer) GracefulStop(ctx context.Context) {
 	s.stop(ctx)
+}
+
+// NewAuthnWhiteListMatcher 创建认证白名单匹配器.
+func NewAuthnWhiteListMatcher() selector.Matcher {
+	// 定义无需认证的方法白名单
+	whitelist := map[string]struct{}{
+		apiv1.MiniBlog_Healthz_FullMethodName:    {},
+		apiv1.MiniBlog_CreateUser_FullMethodName: {},
+		apiv1.MiniBlog_Login_FullMethodName:      {},
+	}
+	// 通过检查方法是否在白名单中决定是否跳过认证
+	return selector.MatchFunc(func(ctx context.Context, call interceptors.CallMeta) bool {
+		_, ok := whitelist[call.FullMethod()]
+		return !ok
+	})
 }

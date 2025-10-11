@@ -10,6 +10,7 @@ import (
 	"context"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	genericvalidation "github.com/onexstack/onexstack/pkg/validation"
 	"google.golang.org/grpc"
 
 	handler "example.com/miniblog/internal/apiserver/handler/grpc"
@@ -42,10 +43,12 @@ func (c *ServerConfig) NewGRPCServerOr() (server.Server, error) {
 		grpc.ChainUnaryInterceptor(
 			// 请求 ID 拦截器
 			mw.RequestIDInterceptor(),
-			// bypass 拦截器，所有请求都通过认证
+			// Bypass 拦截器，通过所有请求的认证
 			mw.AuthnBypasswInterceptor(),
 			// 请求默认值设置拦截器
 			mw.DefaulterInterceptor(),
+			// 数据校验拦截器
+			mw.ValidatorInterceptor(genericvalidation.NewValidator(c.val)),
 		),
 	}
 

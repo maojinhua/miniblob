@@ -4,24 +4,21 @@
 // this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
-package rid_test
+package main
 
 import (
-	"fmt"
-
-	"example.com/miniblog/internal/pkg/rid"
+	"net/http"
 )
 
-func ExampleResourceID_String() {
-	// 定义一个资源标识符，例如用户资源
-	userID := rid.UserID
+func main() {
+}
 
-	// 调用String方法，将ResourceID类型转换为字符串类型
-	idString := userID.String()
-
-	// 输出结果
-	fmt.Println(idString)
-
-	// Output:
-	// user
+func ValidationMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-API-Key") == "" {
+			http.Error(w, "Missing API Key", http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
 // this file is https://example.com/miniblog. The professional
-// version of this repository is https://example.com/onex.
+// version of this repository is https://github.com/onexstack/onex.
 
 package apiserver
 
@@ -18,6 +18,7 @@ import (
 	"gorm.io/gorm"
 
 	"example.com/miniblog/internal/apiserver/biz"
+	"example.com/miniblog/internal/apiserver/pkg/validation"
 	"example.com/miniblog/internal/apiserver/store"
 	"example.com/miniblog/internal/pkg/contextx"
 	"example.com/miniblog/internal/pkg/log"
@@ -65,6 +66,7 @@ type UnionServer struct {
 type ServerConfig struct {
 	cfg *Config
 	biz biz.IBiz
+	val *validation.Validator
 }
 
 // NewUnionServer 根据配置创建联合服务器.
@@ -139,8 +141,8 @@ func (cfg *Config) NewServerConfig() (*ServerConfig, error) {
 
 	return &ServerConfig{
 		cfg: cfg,
-		// 初始化 biz 对象
 		biz: biz.NewBiz(store),
+		val: validation.New(store),
 	}, nil
 }
 

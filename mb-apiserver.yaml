@@ -4,7 +4,8 @@
 # this file is https://example.com/miniblog. The professional
 # version of this repository is https://example.com/onex.
 
-server-mode: gin
+# server-mode: gin
+server-mode: grpc-gateway # 使用 gRPC-Gateway 模式
 jwt-key: Rsuqdjsqdiwdhuw8q0dwdhakjq
 
 log:

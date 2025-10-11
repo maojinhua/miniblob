@@ -1,7 +1,7 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
+// this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
 package apiserver
@@ -49,13 +49,14 @@ func (c *ServerConfig) InstallRESTAPI(engine *gin.Engine) {
 	InstallGenericAPI(engine)
 
 	// 创建核心业务处理器
-	handler := handler.NewHandler(c.biz)
+	handler := handler.NewHandler(c.biz, c.val)
 
 	// 注册健康检查接口
 	engine.GET("/healthz", handler.Healthz)
 
 	// 注册用户登录和令牌刷新接口。这2个接口比较简单，所以没有 API 版本
 	engine.POST("/login", handler.Login)
+	// 注意：认证中间件要在 handler.RefreshToken 之前加载
 	engine.PUT("/refresh-token", mw.AuthnBypasswMiddleware(), handler.RefreshToken)
 
 	authMiddlewares := []gin.HandlerFunc{mw.AuthnBypasswMiddleware()}

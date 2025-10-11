@@ -1,12 +1,12 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
+// this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
 package store
 
-//go:generate mockgen -destination mock_store.go -package store github.com/onexstack/miniblog/internal/miniblog/store IStore,UserStore,PostStore,ConcretePostStore
+//go:generate mockgen -destination mock_store.go -package store example.com/miniblog/internal/miniblog/store IStore,UserStore,PostStore,ConcretePostStore
 
 import (
 	"context"

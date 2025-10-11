@@ -1,7 +1,7 @@
 // Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/onexstack/miniblog. The professional
+// this file is https://example.com/miniblog. The professional
 // version of this repository is https://github.com/onexstack/onex.
 
 // nolint: dupl
@@ -10,6 +10,8 @@ package store
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/onexstack/onexstack/pkg/store/where"
 	"gorm.io/gorm"
@@ -56,6 +58,8 @@ func newUserStore(store *datastore) *userStore {
 
 // Create 插入一条用户记录.
 func (s *userStore) Create(ctx context.Context, obj *model.UserM) error {
+	obj.CreatedAt = time.Now()
+	fmt.Println(obj.CreatedAt,obj.UpdatedAt)
 	if err := s.store.DB(ctx).Create(&obj).Error; err != nil {
 		log.Errorw("Failed to insert user into database", "err", err, "user", obj)
 		return errno.ErrDBWrite.WithMessage(err.Error())

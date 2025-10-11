@@ -5,6 +5,8 @@ go 1.24.4
 require (
 	github.com/gin-contrib/pprof v1.5.3
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.0
 	github.com/jinzhu/copier v0.4.0
@@ -21,6 +23,7 @@ require (
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.25.12
 	k8s.io/apimachinery v0.33.2
+	k8s.io/utils v0.0.0-20241210054802-24370beab758
 )
 
 require (
@@ -44,7 +47,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
@@ -67,7 +69,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
@@ -122,7 +123,6 @@ require (
 	gorm.io/plugin/dbresolver v1.5.3 // indirect
 	k8s.io/component-base v0.32.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/utils v0.0.0-20241210054802-24370beab758 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect

@@ -21,6 +21,7 @@ type UserM struct {
 	Phone     string    `gorm:"column:phone;not null;uniqueIndex:idx_user_phone;comment:用户手机号" json:"phone"`            // 用户手机号
 	CreatedAt time.Time `gorm:"column:createdAt;not null;default:current_timestamp;comment:用户创建时间" json:"createdAt"`    // 用户创建时间
 	UpdatedAt time.Time `gorm:"column:updatedAt;not null;default:current_timestamp;comment:用户最后修改时间" json:"updatedAt"`  // 用户最后修改时间
+	
 }
 
 // TableName UserM's table name

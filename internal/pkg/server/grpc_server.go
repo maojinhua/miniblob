@@ -1,8 +1,8 @@
-// "Copyright 2025 mjh 【694142812@qq.com】 All rights reserved." | unescape
+// Copyright 2024 孔令飞 <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file. The original repo for
 // this file is https://example.com/miniblog. The professional
-// version of this repository is https://example.com/onex.
+// version of this repository is https://github.com/onexstack/onex.
 
 package server
 
@@ -12,6 +12,7 @@ import (
 
 	genericoptions "github.com/onexstack/onexstack/pkg/options"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
@@ -28,6 +29,7 @@ type GRPCServer struct {
 // NewGRPCServer 创建一个新的 GRPC 服务器实例.
 func NewGRPCServer(
 	grpcOptions *genericoptions.GRPCOptions,
+	tlsOptions *genericoptions.TLSOptions,
 	serverOptions []grpc.ServerOption,
 	registerServer func(grpc.ServiceRegistrar),
 ) (*GRPCServer, error) {
@@ -37,12 +39,15 @@ func NewGRPCServer(
 		return nil, err
 	}
 
+	if tlsOptions != nil && tlsOptions.UseTLS {
+		tlsConfig := tlsOptions.MustTLSConfig()
+		serverOptions = append(serverOptions, grpc.Creds(credentials.NewTLS(tlsConfig)))
+	}
+
 	grpcsrv := grpc.NewServer(serverOptions...)
 
 	registerServer(grpcsrv)
 	registerHealthServer(grpcsrv)
-	// Reflection Service（反射服务）​​ 是一种可选的服务器端功能，允许客户端在运行时动态查询服务端提供的接口信息（如服务名称、方法列表、请求/响应类型等），
-	// 而无需提前获取服务的 Protobuf 定义文件（.proto）。
 	reflection.Register(grpcsrv)
 
 	return &GRPCServer{

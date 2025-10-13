@@ -80,3 +80,27 @@ protoc: # 编译 protobuf 文件.
 		--defaults_out=paths=source_relative:$(APIROOT) \
 		$(shell find $(APIROOT) -name *.proto)
 	@find . -name "*.pb.go" -exec protoc-go-inject-tag -input={} \;
+
+.PHONY: ca
+ca: # 生成 CA 文件.
+	@mkdir -p $(OUTPUT_DIR)/cert
+	@# 1. 生成根证书私钥 (CA Key)
+	@openssl genrsa -out $(OUTPUT_DIR)/cert/ca.key 4096
+	@# 2. 使用根私钥生成证书签名请求 (CA CSR)
+	@openssl req -new -nodes -key $(OUTPUT_DIR)/cert/ca.key -sha256 -out $(OUTPUT_DIR)/cert/ca.csr \
+		-subj "/C=CN/ST=Guangdong/L=Shenzhen/O=onexstack/OU=it/CN=127.0.0.1/emailAddress=colin404@foxmail.com"
+	@# 3. 使用根私钥签发根证书 (CA CRT)，使其自签名，有效期为365天
+	@openssl x509 -req -days 365 -in $(OUTPUT_DIR)/cert/ca.csr -signkey $(OUTPUT_DIR)/cert/ca.key -out $(OUTPUT_DIR)/cert/ca.crt
+	@# 4. 生成服务端私钥
+	@openssl genrsa -out $(OUTPUT_DIR)/cert/server.key 2048
+	@# 5. 使用服务端私钥生成服务端的证书签名请求 (Server CSR)
+	@openssl req -new -key $(OUTPUT_DIR)/cert/server.key -out $(OUTPUT_DIR)/cert/server.csr \
+		-subj "/C=CN/ST=Guangdong/L=Shenzhen/O=serverdevops/OU=serverit/CN=localhost/emailAddress=colin404@foxmail.com" \
+		-addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+	@# 6. 使用根证书 (CA) 签发服务端证书 (Server CRT) - 修复语法错误
+	@TMPFILE=$$(mktemp); \
+	printf "[v3_req]\nsubjectAltName=DNS:localhost,IP:127.0.0.1" > $$TMPFILE; \
+	openssl x509 -days 365 -sha256 -req -CA $(OUTPUT_DIR)/cert/ca.crt -CAkey $(OUTPUT_DIR)/cert/ca.key \
+		-CAcreateserial -in $(OUTPUT_DIR)/cert/server.csr -out $(OUTPUT_DIR)/cert/server.crt -extensions v3_req \
+		-extfile $$TMPFILE; \
+	rm -f $$TMPFILE

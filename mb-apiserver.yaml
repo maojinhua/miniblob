@@ -4,8 +4,8 @@
 # this file is https://example.com/miniblog. The professional
 # version of this repository is https://example.com/onex.
 
-# server-mode: gin
-server-mode: grpc-gateway # 使用 gRPC-Gateway 模式
+server-mode: gin
+# server-mode: grpc-gateway # 使用 gRPC-Gateway 模式
 jwt-key: Rsuqdjsqdiwdhuw8q0dwdhakjq
 
 log:
@@ -51,3 +51,13 @@ mysql:
   max-open-connections: 5
   # MySQL 连接最大空闲时间
   max-connection-life-time: 300 # 单位：秒
+
+  # 安全服务器相关配置
+tls:
+  # 是否启动 HTTPS 安全服务器
+  # 生产环境建议开启 HTTPS，并使用 HTTPS 协议访问 API 接口
+  use-tls: true
+  # 证书
+  cert: cert/server.crt
+  # 证书 Key 文件
+  key: cert/server.key

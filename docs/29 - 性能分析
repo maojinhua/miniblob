@@ -1,0 +1,36 @@
+# 图片文字提取结果
+
+根据您提供的图片描述，我已提取并整理出图片中的完整文字内容：
+
+## 完整的 Trace 数据收集与分析流程
+
+### 步骤一：启动 Web 服务
+```bash
+$ go run examples/performance/nethttppprof/main.go
+```
+
+### 步骤二：获取 Trace 数据（持续5秒）
+```bash
+wget "http://localhost:6060/debug/pprof/trace?seconds=5" -O nethttppprof.trace
+```
+
+### 步骤三：启动 Trace 分析工具
+```bash
+go tool trace -http=0.0.0.0:6061 nethttppprof.trace
+```
+
+### 步骤四：在浏览器中查看分析结果
+执行 `go tool trace -http=0.0.0.0:6061 xxx.trace` 命令后，即可在浏览器中打开以下地址查看 trace 的详细信息：
+```
+http://127.0.0.1:6061
+```
+
+## 技术说明
+
+这个流程展示了 Go 语言程序的性能分析完整步骤：
+1. **启动服务**：运行包含 pprof 端口的 Go Web 服务
+2. **采集数据**：使用 wget 从 `/debug/pprof/trace` 端点获取执行跟踪数据
+3. **启动分析**：使用 Go 内置的 trace 工具加载和分析采集的数据
+4. **可视化查看**：通过 Web 界面直观查看程序的执行详情
+
+这是 Go 语言性能调优的标准方法，特别适用于分析程序的并发性能、调度延迟等问题。

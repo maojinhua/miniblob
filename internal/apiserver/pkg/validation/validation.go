@@ -21,6 +21,12 @@ type Validator struct {
 	store store.IStore
 }
 
+// 预编译正则表达式 (全局变量).
+var (
+	lengthRegex = regexp.MustCompile(`^.{3,20}$`)       // 长度在 3 到 20 个字符之间
+	validRegex  = regexp.MustCompile(`^[A-Za-z0-9_]+$`) // 仅包含字母、数字和下划线
+)
+
 // New 创建一个新的 Validator 实例.
 func New(store store.IStore) *Validator {
 	return &Validator{store: store}
@@ -28,18 +34,12 @@ func New(store store.IStore) *Validator {
 
 // isValidUsername 校验用户名是否合法.
 func isValidUsername(username string) bool {
-	// 用户名必须仅包含字母、数字和下划线，并且长度在 3 到 20 个字符之间
-	var (
-		lengthRegex = `^.{3,20}$`       // 长度在 3 到 20 个字符之间
-		validRegex  = `^[A-Za-z0-9_]+$` // 仅包含字母、数字和下划线
-	)
-
 	// 校验长度
-	if matched, _ := regexp.MatchString(lengthRegex, username); !matched {
+	if !lengthRegex.MatchString(username) {
 		return false
 	}
 	// 校验字符合法性
-	if matched, _ := regexp.MatchString(validRegex, username); !matched {
+	if !validRegex.MatchString(username) {
 		return false
 	}
 	return true

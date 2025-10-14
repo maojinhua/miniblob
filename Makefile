@@ -119,3 +119,8 @@ test: # 执行单元测试.
 cover: test ## 执行单元测试，并校验覆盖率阈值.
 	@echo "===========> Running code coverage tests"
 	@go tool cover -func=$(OUTPUT_DIR)/coverage.out | awk -v target=$(COVERAGE) -f $(PROJ_ROOT_DIR)/scripts/coverage.awk
+
+.PHONY: lint
+lint: # 执行静态代码检查.
+	@echo "===========> Running golangci to lint source codes"
+	@golangci-lint run -c $(PROJ_ROOT_DIR)/.golangci.yaml $(PROJ_ROOT_DIR)/...

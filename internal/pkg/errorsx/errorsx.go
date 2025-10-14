@@ -138,8 +138,8 @@ func FromError(err error) *ErrorX {
 	// 遍历 gRPC 错误详情中的所有附加信息（Details）.
 	for _, detail := range gs.Details() {
 		if typed, ok := detail.(*errdetails.ErrorInfo); ok {
-			ret.Reason = typed.Reason
-			return ret.WithMetadata(typed.Metadata)
+			ret.Reason = typed.GetReason()
+			return ret.WithMetadata(typed.GetMetadata())
 		}
 	}
 

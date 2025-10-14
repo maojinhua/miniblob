@@ -189,8 +189,7 @@ func (l *zapLogger) Fatalw(msg string, kvs ...any) {
 	l.z.Sugar().Fatalw(msg, kvs...)
 }
 
-// W 解析传入的 context，尝试提取关注的键值，并添加到 zap.Logger 结构化日志中.
-// W 是 WithContext 的简称
+// W 是 WithContext 的简称.
 func W(ctx context.Context) Logger {
 	return std.W(ctx)
 }

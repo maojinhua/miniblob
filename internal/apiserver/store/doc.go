@@ -1,4 +1,5 @@
 package store
+
 // Store层代码用来跟数据库或者其他第三方微服务进行交互，实现Store层的思路如下：
 
 // 1.定义一个Store层接口，用来定义Store层需要实现的方法。在Go开发中接口通常会被命名为XXXer、XXXInterface、IXXX，其中XXX是接口的功能描述符。这里，将Store层的接口命名为IStore。Biz层的接口同样使用了该命名方式，命名为IBiz，以保持整个项目接口命名方式的统一；

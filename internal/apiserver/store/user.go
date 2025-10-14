@@ -59,7 +59,7 @@ func newUserStore(store *datastore) *userStore {
 // Create 插入一条用户记录.
 func (s *userStore) Create(ctx context.Context, obj *model.UserM) error {
 	obj.CreatedAt = time.Now()
-	fmt.Println(obj.CreatedAt,obj.UpdatedAt)
+	fmt.Println(obj.CreatedAt, obj.UpdatedAt)
 	if err := s.store.DB(ctx).Create(&obj).Error; err != nil {
 		log.Errorw("Failed to insert user into database", "err", err, "user", obj)
 		return errno.ErrDBWrite.WithMessage(err.Error())

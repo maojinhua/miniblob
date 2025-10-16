@@ -7,10 +7,10 @@
 package validation
 
 import (
-	"regexp"
-
 	"example.com/miniblog/internal/apiserver/store"
 	"example.com/miniblog/internal/pkg/errno"
+	"github.com/google/wire"
+	"regexp"
 )
 
 // Validator 是验证逻辑的实现结构体.
@@ -31,6 +31,10 @@ var (
 func New(store store.IStore) *Validator {
 	return &Validator{store: store}
 }
+
+// ProviderSet 是一个 Wire 的 Provider 集合，用于声明依赖注入的规则.
+// 包含 New 构造函数，用于生成 Validator 实例.
+var ProviderSet = wire.NewSet(New)
 
 // isValidUsername 校验用户名是否合法.
 func isValidUsername(username string) bool {

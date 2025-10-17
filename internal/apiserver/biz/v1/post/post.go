@@ -10,6 +10,7 @@ package post
 
 import (
 	"context"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/onexstack/onexstack/pkg/store/where"
@@ -53,6 +54,7 @@ func (b *postBiz) Create(ctx context.Context, rq *apiv1.CreatePostRequest) (*api
 	var postM model.PostM
 	_ = copier.Copy(&postM, rq)
 	postM.UserID = contextx.UserID(ctx)
+	postM.CreatedAt = time.Now()
 
 	if err := b.store.Post().Create(ctx, &postM); err != nil {
 		return nil, err

@@ -7,6 +7,8 @@
 package store
 
 import (
+	"context"
+
 	"example.com/miniblog/internal/pkg/log"
 )
 
@@ -20,6 +22,6 @@ func NewLogger() *Logger {
 }
 
 // Error logs an error message with the provided context using the log package.
-func (l *Logger) Error(err error, msg string, kvs ...any) {
-	log.Errorw(msg, append(kvs, "err", err)...)
+func (l *Logger) Error(ctx context.Context, err error, msg string, kvs ...any) {
+	log.W(ctx).Errorw(msg, append(kvs, "err", err)...)
 }

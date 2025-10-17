@@ -11,6 +11,7 @@ package user
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/onexstack/onexstack/pkg/store/where"
@@ -122,7 +123,8 @@ func (b *userBiz) ChangePassword(ctx context.Context, rq *apiv1.ChangePasswordRe
 func (b *userBiz) Create(ctx context.Context, rq *apiv1.CreateUserRequest) (*apiv1.CreateUserResponse, error) {
 	var userM model.UserM
 	_ = copier.Copy(&userM, rq)
-
+	userM.CreatedAt = time.Now()
+	
 	if err := b.store.User().Create(ctx, &userM); err != nil {
 		return nil, err
 	}

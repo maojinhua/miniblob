@@ -44,6 +44,8 @@ type ServerOptions struct {
 	GRPCOptions *genericoptions.GRPCOptions `json:"grpc" mapstructure:"grpc"`
 	// MySQLOptions 包含 MySQL 配置选项.
 	MySQLOptions *genericoptions.MySQLOptions `json:"mysql" mapstructure:"mysql"`
+	// EnableMemoryStore 指示是否启用内存数据库（用于测试或开发环境）.
+	EnableMemoryStore bool `json:"enable-memory-store" mapstructure:"enable-memory-store"`
 }
 
 // NewServerOptions 创建带有默认值的 ServerOptions 实例.
@@ -56,6 +58,7 @@ func NewServerOptions() *ServerOptions {
 		HTTPOptions:  genericoptions.NewHTTPOptions(),
 		GRPCOptions:  genericoptions.NewGRPCOptions(),
 		MySQLOptions: genericoptions.NewMySQLOptions(),
+		EnableMemoryStore: false,
 	}
 	opts.HTTPOptions.Addr = ":5555"
 	opts.GRPCOptions.Addr = ":6666"
@@ -70,6 +73,7 @@ func (o *ServerOptions) AddFlags(fs *pflag.FlagSet) {
 	// 绑定 JWT Token 的过期时间选项到命令行标志。
 	// 参数名称为 `--expiration`，默认值为 o.Expiration
 	fs.DurationVar(&o.Expiration, "expiration", o.Expiration, "The expiration duration of JWT tokens.")
+	fs.BoolVar(&o.EnableMemoryStore, "enable-memory-store", o.EnableMemoryStore, "Enable in-memory database (useful for testing or development).")
 	o.TLSOptions.AddFlags(fs)
 	o.HTTPOptions.AddFlags(fs)
 	o.GRPCOptions.AddFlags(fs)
@@ -107,12 +111,13 @@ func (o *ServerOptions) Validate() error {
 // Config 基于 ServerOptions 构建 apiserver.Config.
 func (o *ServerOptions) Config() (*apiserver.Config, error) {
 	return &apiserver.Config{
-		ServerMode:   o.ServerMode,
-		JWTKey:       o.JWTKey,
-		Expiration:   o.Expiration,
-		TLSOptions:   o.TLSOptions,
-		HTTPOptions:  o.HTTPOptions,
-		GRPCOptions:  o.GRPCOptions,
-		MySQLOptions: o.MySQLOptions,
+		ServerMode:        o.ServerMode,
+		JWTKey:            o.JWTKey,
+		Expiration:        o.Expiration,
+		TLSOptions:        o.TLSOptions,
+		HTTPOptions:       o.HTTPOptions,
+		GRPCOptions:       o.GRPCOptions,
+		MySQLOptions:      o.MySQLOptions,
+		EnableMemoryStore: o.EnableMemoryStore,
 	}, nil
 }

@@ -1,0 +1,48 @@
+# 如何在 miniblog 项目中新增 REST 资源
+
+## 命名规则
+新增 REST 资源时，需要为资源定义以下三种名称格式：
+
+- **类型**：资源的类型名称，例如 `Post`，使用大写驼峰格式
+- **单数**：资源的单数形式，例如 `post`，使用小写驼峰格式，首字母小写  
+- **复数**：资源的复数形式，例如 `posts`，使用小写驼峰格式，首字母小写
+
+## 新增 Comment 资源的实现步骤
+
+以下以新增 Comment 资源（用于记录博客评论）为例，说明完整的实现流程：
+
+### 1. 定义 API 接口
+- 设计 Comment 资源的 RESTful API 接口规范，可以编写接口文档
+
+### 2. 编译 Protobuf 文件
+- 创建 `pkg/api/apiserver/v1/comment.proto` 文件
+- 编写对应的 Protobuf 定义并编译生成代码
+
+### 3. 数据库层配置
+- 在数据库中创建 `comment` 表,修改 `cmd/gen-gorm-model/gen_gorm_model.go` 文件，添加 comment 表的 GORM Model 生成代码
+- 运行 `go run cmd/gen-gorm-model/gen_gorm_model.go` 命令，生成 GORM Model
+  - 执行完该命令后 会在 internal/apiserver/model/ 目录下生成 post.gen.go 文件
+
+### 4. API 层完善
+- 完善 API 接口请求参数的默认值设置方法（修改 `pkg/api/apiserver/v1/comment.pb.defaults.go` 文件）
+- 实现 API 接口的请求参数校验方法（在 `internal/apiserver/pkg/validation/comment.go` 中实现）
+
+### 5. 数据持久层实现
+- 实现 Comment 资源的 Store 层代码（在 `internal/apiserver/store/comment.go` 中实现）
+
+### 6. 数据转换层
+- 实现 Comment 资源的 Model 和 Proto 的转换函数（在 `internal/apiserver/pkg/conversion/comment.go` 中实现）
+
+### 7. 业务逻辑层
+- 实现 Comment 资源的 Biz 层代码（在 `internal/apiserver/biz/v1/comment/comment.go` 中实现）
+
+### 8. 请求处理层
+- 实现 Comment 资源的 Handler 层代码（在 `internal/apiserver/handler/comment.go` 中实现）
+
+## 开发建议
+
+### 方法一：参考现有资源
+- 复制已有资源的实现文件，通过替换字符串等方式快速实现 Comment 资源的代码
+
+### 方法二：使用开发工具（推荐）
+- 使用 OneX 技术栈中的项目开发脚手架 `osctl` 来自动添加新的资源实现
